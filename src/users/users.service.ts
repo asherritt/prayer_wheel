@@ -13,6 +13,10 @@ export class UsersService {
 
   create(createUserDto: CreateUserDto): Promise<User> {
     const user = new User();
+
+    user.country = createUserDto.country;
+    user.loacation = createUserDto.loacation;
+    user.userName = createUserDto.userName;
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;
 

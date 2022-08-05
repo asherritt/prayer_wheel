@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,11 +11,16 @@ import {
 export class User {
   @PrimaryGeneratedColumn() id: number;
 
+  @Column()
+  @Generated('uuid')
+  uid: string;
+
   @CreateDateColumn({ name: 'created' }) 'created': Date;
 
   @UpdateDateColumn({ name: 'updated' }) 'updated': Date;
 
-  @Column('varchar', { length: 100 }) userName: string;
+  @Column('varchar', { length: 100, nullable: false, unique: true })
+  userName: string;
 
   @Column('varchar', { length: 80, default: 'Anonymous' }) firstName: string;
 
