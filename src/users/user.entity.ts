@@ -1,16 +1,34 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn() id: number;
 
-  @Column()
-  firstName: string;
+  @CreateDateColumn({ name: 'created' }) 'created': Date;
 
-  @Column()
-  lastName: string;
+  @UpdateDateColumn({ name: 'updated' }) 'updated': Date;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column('varchar', { length: 100 }) userName: string;
+
+  @Column('varchar', { length: 80, default: 'Anonymous' }) firstName: string;
+
+  @Column('varchar', { length: 80, default: '' }) lastName: string;
+
+  @Column('varchar', { length: 80, default: 'Anywhere' }) loacation: string;
+
+  @Column('varchar', { length: 80, default: 'Everywhere' }) country: string;
+
+  @Column({ type: 'int', default: 0 }) submitted: number;
+
+  @Column({ type: 'int', default: 0 }) accepted: number;
+
+  @Column({ default: false }) isBlacklisted: boolean;
+
+  @Column({ default: false }) isDeleted: boolean;
 }
