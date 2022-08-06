@@ -19,7 +19,7 @@ export class Prayer {
 
   @CreateDateColumn({ name: 'created' }) 'created': Date;
 
-  @UpdateDateColumn({ name: 'updated' }) 'updated': Date;
+  @UpdateDateColumn({ name: 'updated' }) '_updated': Date;
 
   @Column('varchar', { length: 255, default: '' }) prayerText: string;
 
@@ -30,5 +30,7 @@ export class Prayer {
 
   @Column({ type: 'int', default: 0 }) score: number;
 
-  @Column({ default: false }) isDeleted: boolean;
+  @Column({ default: false }) _isApproved: boolean;
+
+  @Column({ default: false }) _isDeleted: boolean;
 }

@@ -13,11 +13,11 @@ export class User {
 
   @Column()
   @Generated('uuid')
-  uid: string;
+  _uid: string;
 
   @CreateDateColumn({ name: 'created' }) 'created': Date;
 
-  @UpdateDateColumn({ name: 'updated' }) 'updated': Date;
+  @UpdateDateColumn({ name: 'updated' }) '_updated': Date;
 
   @Column('varchar', { length: 100, nullable: false, unique: true })
   userName: string;
@@ -34,7 +34,7 @@ export class User {
 
   @Column({ type: 'int', default: 0 }) accepted: number;
 
-  @Column({ default: false }) isBlacklisted: boolean;
+  @Column({ default: false }) _isBlacklisted: boolean;
 
-  @Column({ default: false }) isDeleted: boolean;
+  @Column({ default: false }) _isDeleted: boolean;
 }

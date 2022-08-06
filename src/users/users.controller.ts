@@ -1,4 +1,9 @@
-import { ValidationPipe } from '@nestjs/common';
+import { SerializeOptions } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   Body,
   Controller,
@@ -14,6 +19,7 @@ import { User } from './user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -23,11 +29,17 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @SerializeOptions({
+    excludePrefixes: ['_'],
+  })
   @Get()
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
+  @SerializeOptions({
+    excludePrefixes: ['_'],
+  })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);

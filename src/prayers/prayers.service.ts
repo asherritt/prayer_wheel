@@ -11,10 +11,12 @@ export class PrayersService {
     private readonly prayerRepository: Repository<Prayer>,
   ) {}
 
-  create(createPrayerDto: CreatePrayerDto): Promise<Prayer> {
+  create(createPrayerDto: CreatePrayerDto, userUUID: string): Promise<Prayer> {
+    console.log(userUUID); // TODO lookup the user from uuid
     const prayer = new Prayer();
     prayer.displayName = createPrayerDto.displayName;
     prayer.prayerText = createPrayerDto.prayerText;
+    prayer.loacation = createPrayerDto.location;
 
     return this.prayerRepository.save(prayer);
   }
@@ -24,6 +26,7 @@ export class PrayersService {
       relations: {
         user: true,
       },
+      where: { _isDeleted: false, _isApproved: true },
     });
   }
 

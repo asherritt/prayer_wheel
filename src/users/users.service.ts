@@ -24,11 +24,17 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      where: { _isDeleted: false, _isBlacklisted: false },
+    });
   }
 
   findOne(id: number): Promise<User> {
-    return this.usersRepository.findOneBy({ id: id });
+    return this.usersRepository.findOneBy({
+      id: id,
+      _isDeleted: false,
+      _isBlacklisted: false,
+    });
   }
 
   async remove(id: string): Promise<void> {
