@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
-import { Prayer } from './prayer.entity';
+import { Prayer, PrayerStatus } from './prayer.entity';
 
 @Injectable()
 export class PrayersService {
@@ -26,7 +26,7 @@ export class PrayersService {
       relations: {
         user: true,
       },
-      where: { _isDeleted: false, _isApproved: true },
+      where: { _isDeleted: false, _status: PrayerStatus.PENDING },
     });
   }
 

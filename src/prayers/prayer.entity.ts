@@ -9,6 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum PrayerStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
 @Entity()
 export class Prayer {
   @PrimaryGeneratedColumn() id: number;
@@ -30,7 +36,12 @@ export class Prayer {
 
   @Column({ type: 'int', default: 0 }) score: number;
 
-  @Column({ default: false }) _isApproved: boolean;
+  @Column({
+    type: 'enum',
+    enum: ['PENDING', 'APPROVED', 'REJECTED'],
+    default: 'PENDING',
+  })
+  _status: PrayerStatus;
 
   @Column({ default: false }) _isDeleted: boolean;
 }
