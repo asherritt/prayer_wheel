@@ -8,3 +8,9 @@ async function bootstrap() {
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
+
+// TODO validate all calls
+// TODO make use of uid on jwt and auth
+// TODO handle exceptions
+// TODO create query that returns random prayer
+// TODO Unit Tests

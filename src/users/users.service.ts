@@ -37,6 +37,14 @@ export class UsersService {
     });
   }
 
+  findOneByUserName(userName: string): Promise<User> {
+    return this.usersRepository.findOneBy({
+      userName: userName,
+      _isDeleted: false,
+      _isBlacklisted: false,
+    });
+  }
+
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }

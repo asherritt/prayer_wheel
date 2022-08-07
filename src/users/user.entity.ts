@@ -22,6 +22,8 @@ export class User {
   @Column('varchar', { length: 100, nullable: false, unique: true })
   userName: string;
 
+  @Column('varchar', { length: 10, nullable: false }) _password: string;
+
   @Column('varchar', { length: 80, default: 'Anonymous' }) firstName: string;
 
   @Column('varchar', { length: 80, default: '' }) lastName: string;

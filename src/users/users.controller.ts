@@ -12,11 +12,13 @@ import {
   Param,
   Post,
   ParseIntPipe,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -40,6 +42,7 @@ export class UsersController {
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
