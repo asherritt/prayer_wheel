@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,9 +8,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import * as bcrypt from 'bcrypt';
+
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn() id: number;
+  @PrimaryGeneratedColumn() _id: number;
 
   @Column()
   @Generated('uuid')
@@ -22,7 +25,7 @@ export class User {
   @Column('varchar', { length: 100, nullable: false, unique: true })
   userName: string;
 
-  @Column('varchar', { length: 10, nullable: false }) _password: string;
+  @Column('varchar', { length: 200, nullable: false }) _password: string;
 
   @Column('varchar', { length: 80, default: 'Anonymous' }) firstName: string;
 
@@ -39,4 +42,18 @@ export class User {
   @Column({ default: false }) _isBlacklisted: boolean;
 
   @Column({ default: false }) _isDeleted: boolean;
+
+  public isValid(): boolean {
+    return this._isDeleted == false && this._isBlacklisted == false;
+  }
+
+  @BeforeInsert()
+  async hashPassword() {
+    // TODO put salt in Env variable
+    this._password = await bcrypt.hash(this._password, 10);
+  }
+
+  public passwordIsValid(rawPassword: string): boolean {
+    return bcrypt.compareSync(rawPassword, this._password);
+  }
 }

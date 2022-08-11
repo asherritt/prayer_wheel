@@ -9,8 +9,12 @@ async function bootstrap() {
 }
 bootstrap();
 
-// TODO validate all calls
-// TODO make use of uid on jwt and auth
 // TODO handle exceptions
-// TODO create query that returns random prayer
+// TODO create query that returns random prayer ?How to weight?
+// TODO lookup table to track what prayers people have prayed for?
+// TODO scoring for consistency?
 // TODO Unit Tests
+// TODO validate all calls ?Global?
+// TODO Implement logging
+// TODO env vars and secrets?
+// TODO think about admin api?

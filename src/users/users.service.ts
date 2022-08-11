@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidationError } from 'class-validator';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
@@ -11,16 +12,26 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = new User();
+    newUser.country = createUserDto.country;
+    newUser.loacation = createUserDto.loacation;
+    newUser.userName = createUserDto.userName;
+    newUser.firstName = createUserDto.firstName;
+    newUser.lastName = createUserDto.lastName;
+    newUser._password = createUserDto.password;
+    const existingUser = await this.usersRepository.findOneBy({
+      userName: createUserDto.userName,
+    });
 
-    user.country = createUserDto.country;
-    user.loacation = createUserDto.loacation;
-    user.userName = createUserDto.userName;
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
-
-    return this.usersRepository.save(user);
+    if (existingUser) {
+      throw new HttpException(
+        'Username already exists.',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      return this.usersRepository.save(newUser);
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -31,7 +42,7 @@ export class UsersService {
 
   findOne(id: number): Promise<User> {
     return this.usersRepository.findOneBy({
-      id: id,
+      _id: id,
       _isDeleted: false,
       _isBlacklisted: false,
     });

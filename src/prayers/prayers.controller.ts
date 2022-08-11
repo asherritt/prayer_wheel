@@ -1,4 +1,4 @@
-import { SerializeOptions } from '@nestjs/common';
+import { Req, SerializeOptions, UseGuards } from '@nestjs/common';
 import {
   ClassSerializerInterceptor,
   UseInterceptors,
@@ -14,6 +14,8 @@ import {
   ParseIntPipe,
   UsePipes,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer } from './prayer.entity';
 import { PrayersService } from './prayers.service';
@@ -24,10 +26,17 @@ import { PrayersService } from './prayers.service';
 export class PrayersController {
   constructor(private readonly prayerService: PrayersService) {}
 
+  @SerializeOptions({
+    excludePrefixes: ['_'],
+  })
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createPrayerDto: CreatePrayerDto): Promise<Prayer> {
-    const userUUID = ''; // TODO get user uuid from header or JWT
-    return this.prayerService.create(createPrayerDto, userUUID);
+  create(
+    @Body() createPrayerDto: CreatePrayerDto,
+    @Req() req: any,
+  ): Promise<Prayer> {
+    const uid = <string>req.user;
+    return this.prayerService.create(createPrayerDto, uid);
   }
 
   @SerializeOptions({
