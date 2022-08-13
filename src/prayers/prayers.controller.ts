@@ -50,6 +50,16 @@ export class PrayersController {
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
+  @UseGuards(JwtAuthGuard)
+  @Get('/random')
+  randomOne(@Req() req: any): Promise<Prayer> {
+    const uid = <string>req.user;
+    return this.prayerService.findRandom(uid);
+  }
+
+  @SerializeOptions({
+    excludePrefixes: ['_'],
+  })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Prayer> {
     return this.prayerService.findOne(id);
