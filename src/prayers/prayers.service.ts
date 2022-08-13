@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { Repository, Not } from 'typeorm';
@@ -47,25 +52,19 @@ export class PrayersService {
   }
 
   async findRandom(uid): Promise<Prayer> {
-    // this.prayerRepository.find({
-    //   relations: {
-    //     user: true,
-    //   },
-    //   where: {
-    //     _isDeleted: false,
-    //     _status: PrayerStatus.APPROVED,
-    //     user: { _uid: Not(uid) },
-    //   },
-    //   order: {
-    //     score: 'ASC',
-    //   },
-    //   take: 5,
-    // });
-
     // TODO figure out a way of not having to query for user here
     // TODO could use prayer._uid
     const user = await this.userRepository.findOneBy({ _uid: uid });
 
+    if (!user) {
+      // This shouldn't happen, but this might be considered a 500 error too.
+      throw new HttpException(
+        'Your username could not be found.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    // Select a radnom prayer weighted towards prayers with lower scores
+    // and omitting any prayers made by the logged in user.
     return this.prayerRepository
       .createQueryBuilder('prayer')
       .where('prayer.user_id != :uid', { uid: user._id })

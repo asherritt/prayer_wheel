@@ -10,7 +10,6 @@ async function bootstrap() {
 bootstrap();
 
 // TODO handle exceptions
-// TODO create query that returns random prayer ?How to weight?
 // TODO lookup table to track what prayers people have prayed for?
 // TODO scoring for consistency?
 // TODO Unit Tests
@@ -18,3 +17,7 @@ bootstrap();
 // TODO Implement logging
 // TODO env vars and secrets?
 // TODO think about admin api?
+// TODO how to contact people once the time period is done.
+// TODO report prayer functionality
+// TODO AWS check prayer language for violations
+// TODO Approve Reject prayers
