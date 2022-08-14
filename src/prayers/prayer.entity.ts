@@ -13,6 +13,7 @@ export enum PrayerStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
+  FLAGGED = 'FLAGGED',
 }
 
 @Entity()
@@ -38,7 +39,7 @@ export class Prayer {
 
   @Column({
     type: 'enum',
-    enum: ['PENDING', 'APPROVED', 'REJECTED'],
+    enum: ['PENDING', 'APPROVED', 'REJECTED', 'FLAGGED'],
     default: 'PENDING',
   })
   _status: PrayerStatus;

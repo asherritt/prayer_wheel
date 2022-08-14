@@ -10,6 +10,7 @@ async function bootstrap() {
 bootstrap();
 
 // TODO handle exceptions
+// TODO Throttle users prayer acceptance?
 // TODO lookup table to track what prayers people have prayed for?
 // TODO scoring for consistency?
 // TODO Unit Tests

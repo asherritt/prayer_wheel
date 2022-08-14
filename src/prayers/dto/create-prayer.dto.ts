@@ -7,10 +7,6 @@ import {
 } from 'class-validator';
 
 export class CreatePrayerDto {
-  @IsInt()
-  @IsNotEmpty()
-  userId;
-
   @IsString()
   @IsNotEmpty()
   @MaxLength(80)

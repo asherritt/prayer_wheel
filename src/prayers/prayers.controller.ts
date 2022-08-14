@@ -1,4 +1,11 @@
-import { Req, SerializeOptions, UseGuards } from '@nestjs/common';
+import {
+  HttpException,
+  Patch,
+  Put,
+  Req,
+  SerializeOptions,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ClassSerializerInterceptor,
   UseInterceptors,
@@ -14,8 +21,11 @@ import {
   ParseIntPipe,
   UsePipes,
 } from '@nestjs/common';
+import { resolve } from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UpdateResult } from 'typeorm';
+import { AcceptPrayerDto } from './dto/accept-prayer.dto';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer } from './prayer.entity';
 import { PrayersService } from './prayers.service';
@@ -26,6 +36,7 @@ import { PrayersService } from './prayers.service';
 export class PrayersController {
   constructor(private readonly prayerService: PrayersService) {}
 
+  // CREATE PRAYER
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
@@ -38,7 +49,7 @@ export class PrayersController {
     const uid = <string>req.user;
     return this.prayerService.create(createPrayerDto, uid);
   }
-
+  // GET ALL PRAYERS
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
@@ -46,7 +57,7 @@ export class PrayersController {
   findAll(): Promise<Prayer[]> {
     return this.prayerService.findAll();
   }
-
+  // GET RANDOM PRAYER
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
@@ -56,7 +67,33 @@ export class PrayersController {
     const uid = <string>req.user;
     return this.prayerService.findRandom(uid);
   }
-
+  // REPORT PRAYER
+  @SerializeOptions({
+    excludePrefixes: ['_'],
+  })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/report')
+  reportPrayer(@Req() req: any): Promise<Prayer> {
+    // TODO let a user report a prayer, track who reports, track number of reports
+    const uid = <string>req.user;
+    return this.prayerService.findRandom(uid);
+  }
+  // ACCEPT PRAYER
+  @UseGuards(JwtAuthGuard)
+  @Put('/accept')
+  accept(@Body() acceptPrayerDto: AcceptPrayerDto): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.prayerService
+        .updateScore(acceptPrayerDto.id)
+        .then((result) => {
+          resolve(true);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+  // GET PRAYER BY ID
   @SerializeOptions({
     excludePrefixes: ['_'],
   })
@@ -64,7 +101,7 @@ export class PrayersController {
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Prayer> {
     return this.prayerService.findOne(id);
   }
-
+  // DELETE PRAYER
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.prayerService.remove(id);

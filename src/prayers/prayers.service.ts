@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, UpdateResult } from 'typeorm';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer, PrayerStatus } from './prayer.entity';
 
@@ -51,6 +51,17 @@ export class PrayersService {
     return this.prayerRepository.findOneBy({ id: id });
   }
 
+  async updateScore(id: number): Promise<any> {
+    const prayer = await this.prayerRepository.findOneBy({ id: id });
+
+    if (!prayer) {
+      throw new HttpException('Prayer not found.', HttpStatus.NOT_FOUND);
+    }
+
+    prayer.score++;
+    return this.prayerRepository.save(prayer);
+  }
+
   async findRandom(uid): Promise<Prayer> {
     // TODO figure out a way of not having to query for user here
     // TODO could use prayer._uid
@@ -74,6 +85,24 @@ export class PrayersService {
       .orderBy('RAND()')
       .limit(1)
       .getOne();
+  }
+
+  async incermentScore(id: number): Promise<Prayer> {
+    const prayer = await this.prayerRepository.findOneBy({ id: id });
+
+    if (!prayer) {
+      throw new HttpException('Prayer not found.', HttpStatus.NOT_FOUND);
+    }
+
+    prayer.score++;
+    return await this.prayerRepository.save(prayer);
+
+    // if (!prayer) {
+    //   throw new HttpException('Prayer not found.', HttpStatus.NOT_FOUND);
+    // }
+
+    // prayer.score++;
+    // return await this.prayerRepository.save(prayer);
   }
 
   async remove(id: string): Promise<void> {
