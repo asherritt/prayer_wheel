@@ -1,5 +1,6 @@
 import {
   HttpException,
+  HttpStatus,
   Patch,
   Put,
   Req,
@@ -29,12 +30,17 @@ import { AcceptPrayerDto } from './dto/accept-prayer.dto';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer } from './prayer.entity';
 import { PrayersService } from './prayers.service';
+import { UsersService } from '../users/users.service';
+import { userInfo } from 'os';
 
 @Controller('prayers')
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe())
 export class PrayersController {
-  constructor(private readonly prayerService: PrayersService) {}
+  constructor(
+    private readonly prayerService: PrayersService,
+    private readonly userService: UsersService,
+  ) {}
 
   // CREATE PRAYER
   @SerializeOptions({
@@ -81,17 +87,39 @@ export class PrayersController {
   // ACCEPT PRAYER
   @UseGuards(JwtAuthGuard)
   @Put('/accept')
-  accept(@Body() acceptPrayerDto: AcceptPrayerDto): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.prayerService
-        .updateScore(acceptPrayerDto.id)
-        .then((result) => {
-          resolve(true);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async accept(
+    @Body() acceptPrayerDto: AcceptPrayerDto,
+    @Req() req: any,
+  ): Promise<boolean> {
+    const uid = <string>req.user;
+
+    const user = await this.userService.findOneByUID(uid);
+
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+    }
+
+    if (!user.isValid()) {
+      throw new HttpException('User is disallowed.', HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    const prayerDelta = new Date().getTime() - user.lastAcceptance.getTime();
+
+    // const FOUR_HOURS = 14400000; // TODO mover this to settings
+
+    const FOUR_HOURS = 14400; // TODO mover this to settings
+
+    if (prayerDelta < FOUR_HOURS) {
+      throw new HttpException(
+        'You must wait before you can accept another prayer.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.prayerService.updateScore(acceptPrayerDto.id);
+    await this.userService.updateAcceptance(uid);
+
+    return true;
   }
   // GET PRAYER BY ID
   @SerializeOptions({

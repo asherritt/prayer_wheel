@@ -56,7 +56,24 @@ export class UsersService {
     });
   }
 
+  findOneByUID(uid: string): Promise<User> {
+    return this.usersRepository.findOneBy({ _uid: uid });
+  }
+
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
+  }
+
+  async updateAcceptance(uid: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ _uid: uid });
+
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+    }
+
+    user.accepted++;
+    user.lastAcceptance = new Date();
+
+    return this.usersRepository.save(user);
   }
 }

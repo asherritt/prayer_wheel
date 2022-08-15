@@ -5,6 +5,7 @@ import {
   Entity,
   Generated,
   PrimaryGeneratedColumn,
+  Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -38,6 +39,8 @@ export class User {
   @Column({ type: 'int', default: 0 }) submitted: number;
 
   @Column({ type: 'int', default: 0 }) accepted: number;
+
+  @Column({ type: 'datetime' }) lastAcceptance: Date;
 
   @Column({ default: false }) _isBlacklisted: boolean;
 
