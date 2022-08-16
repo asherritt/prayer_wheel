@@ -1,37 +1,29 @@
 import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Patch,
+  Post,
   Put,
   Req,
   SerializeOptions,
   UseGuards,
-} from '@nestjs/common';
-import {
-  ClassSerializerInterceptor,
   UseInterceptors,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  ParseIntPipe,
-  UsePipes,
-} from '@nestjs/common';
-import { resolve } from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UpdateResult } from 'typeorm';
+import { UsersService } from '../users/users.service';
 import { AcceptPrayerDto } from './dto/accept-prayer.dto';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer } from './prayer.entity';
 import { PrayersService } from './prayers.service';
-import { UsersService } from '../users/users.service';
-import { userInfo } from 'os';
 
 @Controller('prayers')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -92,7 +84,6 @@ export class PrayersController {
     @Req() req: any,
   ): Promise<boolean> {
     const uid = <string>req.user;
-
     const user = await this.userService.findOneByUID(uid);
 
     if (!user) {
@@ -106,7 +97,6 @@ export class PrayersController {
     const prayerDelta = new Date().getTime() - user.lastAcceptance.getTime();
 
     // const FOUR_HOURS = 14400000; // TODO mover this to settings
-
     const FOUR_HOURS = 14400; // TODO mover this to settings
 
     if (prayerDelta < FOUR_HOURS) {
@@ -117,7 +107,7 @@ export class PrayersController {
     }
 
     await this.prayerService.updateScore(acceptPrayerDto.id);
-    await this.userService.updateAcceptance(uid);
+    await this.userService.updateAcceptance(user);
 
     return true;
   }

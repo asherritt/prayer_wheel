@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +13,7 @@ import { Prayer, PrayerStatus } from './prayer.entity';
 
 @Injectable()
 export class PrayersService {
+  private readonly logger = new Logger(PrayersService.name);
   constructor(
     @InjectRepository(Prayer)
     private readonly prayerRepository: Repository<Prayer>,
@@ -24,6 +26,8 @@ export class PrayersService {
     userUUID: string,
   ): Promise<Prayer> {
     const user = await this.userRepository.findOneBy({ _uid: userUUID });
+
+    this.logger.log(`create for uid: ${userUUID}`);
 
     if (user?.isValid()) {
       const prayer = new Prayer();
@@ -39,6 +43,8 @@ export class PrayersService {
   }
 
   async findAll(): Promise<Prayer[]> {
+    this.logger.log(`findAll`);
+
     return this.prayerRepository.find({
       relations: {
         user: true,
@@ -52,6 +58,8 @@ export class PrayersService {
   }
 
   async updateScore(id: number): Promise<any> {
+    this.logger.log(`updateScore for prayer.id: ${id}`);
+
     const prayer = await this.prayerRepository.findOneBy({ id: id });
 
     if (!prayer) {
@@ -88,6 +96,8 @@ export class PrayersService {
   }
 
   async incermentScore(id: number): Promise<Prayer> {
+    this.logger.log(`incermentScore for prayer.id: ${id}`);
+
     const prayer = await this.prayerRepository.findOneBy({ id: id });
 
     if (!prayer) {
@@ -96,13 +106,6 @@ export class PrayersService {
 
     prayer.score++;
     return await this.prayerRepository.save(prayer);
-
-    // if (!prayer) {
-    //   throw new HttpException('Prayer not found.', HttpStatus.NOT_FOUND);
-    // }
-
-    // prayer.score++;
-    // return await this.prayerRepository.save(prayer);
   }
 
   async remove(id: string): Promise<void> {

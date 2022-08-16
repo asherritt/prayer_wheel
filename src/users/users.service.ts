@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationError } from 'class-validator';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
@@ -64,13 +65,7 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  async updateAcceptance(uid: string): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ _uid: uid });
-
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
-    }
-
+  async updateAcceptance(user: User): Promise<User> {
     user.accepted++;
     user.lastAcceptance = new Date();
 
