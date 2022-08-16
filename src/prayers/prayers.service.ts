@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { Repository, Not, UpdateResult } from 'typeorm';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer, PrayerStatus } from './prayer.entity';
@@ -106,6 +107,54 @@ export class PrayersService {
 
     prayer.score++;
     return await this.prayerRepository.save(prayer);
+  }
+
+  async acceptPrayer(uid: string, prayerID: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ _uid: uid });
+
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+    }
+
+    if (!user.isValid()) {
+      throw new HttpException('User is disallowed.', HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    const prayerDelta = new Date().getTime() - user.lastAcceptance.getTime();
+
+    // const FOUR_HOURS = 14400000; // TODO mover this to settings
+    const FOUR_HOURS = 14400; // TODO mover this to settings
+
+    if (prayerDelta < FOUR_HOURS) {
+      throw new HttpException(
+        'You must wait before you can accept another prayer.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.updateScore(prayerID);
+
+    user.accepted++;
+    user.lastAcceptance = new Date();
+
+    return await this.userRepository.save(user);
+  }
+
+  async reportPrayer(uid: string, prayerID: number): Promise<Prayer> {
+    this.logger.log(
+      `reportPrayer for prayer.id: ${prayerID} by user.uid: ${uid}`,
+    );
+
+    const reportingUser = await this.userRepository.findOneBy({ _uid: uid });
+    const reportedPrayer = await this.prayerRepository.findOneBy({
+      id: prayerID,
+    });
+
+    return reportedPrayer;
+    // TODO add entry into report table
+    // TODO check report count
+    // TODO if over threshold set prayer.status = rejected, blacklist user,
+    //      check report count of reporting user. If over a threshold then blacklist them.
   }
 
   async remove(id: string): Promise<void> {

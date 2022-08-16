@@ -64,11 +64,4 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }
-
-  async updateAcceptance(user: User): Promise<User> {
-    user.accepted++;
-    user.lastAcceptance = new Date();
-
-    return this.usersRepository.save(user);
-  }
 }

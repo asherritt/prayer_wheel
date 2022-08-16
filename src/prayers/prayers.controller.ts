@@ -71,10 +71,13 @@ export class PrayersController {
   })
   @UseGuards(JwtAuthGuard)
   @Patch('/report')
-  reportPrayer(@Req() req: any): Promise<Prayer> {
-    // TODO let a user report a prayer, track who reports, track number of reports
+  reportPrayer(
+    @Body() acceptPrayerDto: AcceptPrayerDto,
+    @Req() req: any,
+  ): Promise<Prayer> {
     const uid = <string>req.user;
-    return this.prayerService.findRandom(uid);
+
+    return this.prayerService.reportPrayer(uid, acceptPrayerDto.id);
   }
   // ACCEPT PRAYER
   @UseGuards(JwtAuthGuard)
@@ -84,30 +87,8 @@ export class PrayersController {
     @Req() req: any,
   ): Promise<boolean> {
     const uid = <string>req.user;
-    const user = await this.userService.findOneByUID(uid);
 
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
-    }
-
-    if (!user.isValid()) {
-      throw new HttpException('User is disallowed.', HttpStatus.NOT_ACCEPTABLE);
-    }
-
-    const prayerDelta = new Date().getTime() - user.lastAcceptance.getTime();
-
-    // const FOUR_HOURS = 14400000; // TODO mover this to settings
-    const FOUR_HOURS = 14400; // TODO mover this to settings
-
-    if (prayerDelta < FOUR_HOURS) {
-      throw new HttpException(
-        'You must wait before you can accept another prayer.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    await this.prayerService.updateScore(acceptPrayerDto.id);
-    await this.userService.updateAcceptance(user);
+    await this.prayerService.acceptPrayer(uid, acceptPrayerDto.id);
 
     return true;
   }

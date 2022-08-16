@@ -13,5 +13,6 @@ import { UsersService } from 'src/users/users.service';
   ],
   providers: [PrayersService, UsersService],
   controllers: [PrayersController],
+  exports: [PrayersService, UsersService],
 })
 export class PrayersModule {}

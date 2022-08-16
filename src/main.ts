@@ -16,7 +16,6 @@ bootstrap();
 // TODO scoring for consistency?
 // TODO Unit Tests
 // TODO validate all calls ?Global?
-// TODO Implement logging
 // TODO env vars and secrets?
 // TODO think about admin api?
 // TODO how to contact people once the time period is done.
