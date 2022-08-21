@@ -49,7 +49,12 @@ export class UsersService {
     });
   }
 
-  findOneByUserName(userName: string): Promise<User> {
+  /**
+   * Find one valid user (_isDeleted, _isBlacklisted: false) by username
+   * @param userName
+   * @returns
+   */
+  findValidUserByUserName(userName: string): Promise<User> {
     return this.usersRepository.findOneBy({
       userName: userName,
       _isDeleted: false,

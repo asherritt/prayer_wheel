@@ -4,25 +4,29 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Prayer } from './prayer.entity';
 
 @Entity()
-export class PReport {
+@Unique('constraint_report', ['reportedBy', 'prayerBy', 'prayer'])
+export class Report {
   @PrimaryGeneratedColumn() _id: number;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  // @OneToOne(() => User)
+  // @JoinColumn()
+  // reportedBy: User;
+
+  @ManyToOne(() => User)
   reportedBy: User;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(() => User)
   prayerBy: User;
 
-  @OneToOne(() => Prayer)
-  @JoinColumn()
+  @ManyToOne(() => Prayer)
   prayer: Prayer;
 
   @CreateDateColumn({ name: 'created' }) '_created': Date;

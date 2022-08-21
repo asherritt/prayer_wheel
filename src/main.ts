@@ -11,14 +11,12 @@ async function bootstrap() {
 }
 bootstrap();
 
+// TODO send text to sightengine
 // TODO handle exceptions
 // TODO lookup table to track what prayers people have prayed for?
 // TODO scoring for consistency?
 // TODO Unit Tests
 // TODO validate all calls ?Global?
-// TODO env vars and secrets?
 // TODO think about admin api?
 // TODO how to contact people once the time period is done.
-// TODO report prayer functionality
-// TODO AWS check prayer language for violations
 // TODO Approve Reject prayers

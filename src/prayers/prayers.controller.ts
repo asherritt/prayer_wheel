@@ -24,6 +24,7 @@ import { AcceptPrayerDto } from './dto/accept-prayer.dto';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer } from './prayer.entity';
 import { PrayersService } from './prayers.service';
+import { Report } from './report.entity';
 
 @Controller('prayers')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -70,11 +71,11 @@ export class PrayersController {
     excludePrefixes: ['_'],
   })
   @UseGuards(JwtAuthGuard)
-  @Patch('/report')
+  @Post('/report')
   reportPrayer(
     @Body() acceptPrayerDto: AcceptPrayerDto,
     @Req() req: any,
-  ): Promise<Prayer> {
+  ): Promise<Report> {
     const uid = <string>req.user;
 
     return this.prayerService.reportPrayer(uid, acceptPrayerDto.id);

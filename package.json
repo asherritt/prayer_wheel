@@ -19,7 +19,9 @@
     "test:e2e": "echo 'No e2e tests implemented yet.'"
   },
   "dependencies": {
+    "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "9.0.1",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "9.0.1",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
