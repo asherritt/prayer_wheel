@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { ModerationService } from 'src/moderation/moderation.service';
 import { Repository, Not, UpdateResult, MoreThan } from 'typeorm';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer, PrayerStatus } from './prayer.entity';

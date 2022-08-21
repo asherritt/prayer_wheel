@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Prayer } from './prayers/prayer.entity';
 import { Report } from './prayers/report.entity';
 import { User } from './users/user.entity';
+import { ModerationModule } from './moderation/moderation.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { User } from './users/user.entity';
     UsersModule,
     PrayersModule,
     AuthModule,
+    ModerationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
