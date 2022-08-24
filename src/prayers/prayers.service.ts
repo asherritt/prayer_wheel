@@ -7,17 +7,17 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
-import { UsersService } from 'src/users/users.service';
-import { ModerationService } from 'src/moderation/moderation.service';
-import { Repository, Not, UpdateResult, MoreThan } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { CreatePrayerDto } from './dto/create-prayer.dto';
 import { Prayer, PrayerStatus } from './prayer.entity';
 import { Report } from './report.entity';
+import { ModerationService } from 'src/moderation/moderation.service';
 
 @Injectable()
 export class PrayersService {
   private readonly logger = new Logger(PrayersService.name);
   constructor(
+    private moderationService: ModerationService,
     @InjectRepository(Prayer)
     private readonly prayerRepository: Repository<Prayer>,
     @InjectRepository(User)
@@ -40,6 +40,31 @@ export class PrayersService {
       prayer.prayerText = createPrayerDto.prayerText;
       prayer.loacation = createPrayerDto.location;
       prayer.user = user;
+
+      // this.moderationService.moderatePrayer(prayer).subscribe({
+      //   next: (result) => {
+      //     if (result.status == 200) {
+      //       try {
+      //         // Test the results to see if prayer passed moderation
+      //         if (
+      //           result.data.link.matches.length == 0 &&
+      //           result.data.personal.matches.length == 0 &&
+      //           result.data.profanity.matches.length == 0
+      //         ) {
+      //           console.log('Set prayer to Approved');
+      //         } else {
+      //           // Prayer did not pass moderation
+      //           console.log('Set prayer to Rejected');
+      //         }
+      //       } catch (err) {
+      //         console.log('Error when moderation prayer');
+      //       }
+      //     }
+      //   },
+      //   error: (err) => {
+      //     console.log(err);
+      //   },
+      // });
 
       return this.prayerRepository.save(prayer);
     } else {

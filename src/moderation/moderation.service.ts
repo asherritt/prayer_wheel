@@ -3,29 +3,29 @@ import { Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { Prayer } from 'src/prayers/prayer.entity';
-import { ConfigService } from '@nestjs/config';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class ModerationService {
-  constructor(
-    private readonly httpService: HttpService,
-    private config: ConfigService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
-  moderatePrayer(prayer: Prayer): Observable<AxiosResponse<Prayer[]>> {
-    const data = new FormData();
-    data.append('text', 'Contact rick(at)gmail(dot)com to have s_*_x');
-    data.append('lang', 'en');
-    data.append('opt_countries', 'us,gb,fr');
-    data.append('mode', 'standard');
-    data.append('api_user', this.config.get<string>('MOD_API_USER'));
-    data.append('api_secret', this.config.get<string>('MOD_API_SECRET'));
+  moderatePrayer(prayer: Prayer): Observable<AxiosResponse<any>> {
+    // TODO Remove this. Moderation will happen in Lambda
+    const d = new FormData();
+
+    // Submit all the possible text of the prayer to moderate it for violations
+    d.append(
+      'text',
+      `${prayer.prayerText} ${prayer.displayName} ${prayer.loacation}`,
+    );
+    d.append('lang', 'en');
+    d.append('mode', 'standard');
+    d.append('api_secret', 'LfvaFNFF2XuUzijH7FEs');
+    d.append('api_user', '1775677700');
 
     return this.httpService.post(
       'https://api.sightengine.com/1.0/text/check.json',
-      {
-        text: prayer.prayerText,
-      },
+      d,
     );
   }
 }

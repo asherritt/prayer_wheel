@@ -11,6 +11,8 @@ import { Report } from './prayers/report.entity';
 import { User } from './users/user.entity';
 import { ModerationModule } from './moderation/moderation.module';
 
+// TODO Remove this. Moderation will happen in Lambda
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

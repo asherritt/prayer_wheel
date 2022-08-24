@@ -11,12 +11,7 @@ async function bootstrap() {
 }
 bootstrap();
 
-// TODO send text to sightengine
+// TODO Twilio integration, email integration
 // TODO handle exceptions
-// TODO lookup table to track what prayers people have prayed for?
-// TODO scoring for consistency?
 // TODO Unit Tests
 // TODO validate all calls ?Global?
-// TODO think about admin api?
-// TODO how to contact people once the time period is done.
-// TODO Approve Reject prayers

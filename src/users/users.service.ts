@@ -21,6 +21,11 @@ export class UsersService {
     newUser.firstName = createUserDto.firstName;
     newUser.lastName = createUserDto.lastName;
     newUser._password = createUserDto.password;
+    newUser._email = createUserDto.email;
+    newUser._phone = createUserDto.phone;
+    newUser.emailEnabled = createUserDto.emailEnabled;
+    newUser.phoneEnabled = createUserDto.phoneEnabled;
+
     const existingUser = await this.usersRepository.findOneBy({
       userName: createUserDto.userName,
     });

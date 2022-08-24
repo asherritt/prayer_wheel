@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   BeforeInsert,
   Column,
   CreateDateColumn,
@@ -9,7 +10,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import CryptoUtil from '../util/crypto.util';
+
 import * as bcrypt from 'bcrypt';
+import { util } from 'prettier';
 
 @Entity()
 export class User {
@@ -27,6 +31,14 @@ export class User {
   userName: string;
 
   @Column('varchar', { length: 200, nullable: false }) _password: string;
+
+  @Column('varchar', { length: 100, nullable: false }) _email: string;
+
+  @Column('varchar', { length: 100, nullable: false }) _phone: string;
+
+  @Column({ default: false }) emailEnabled: boolean;
+
+  @Column({ default: false }) phoneEnabled: boolean;
 
   @Column('varchar', { length: 80, default: 'Anonymous' }) firstName: string;
 
@@ -54,9 +66,24 @@ export class User {
   async hashPassword() {
     // TODO put salt in Env variable
     this._password = await bcrypt.hash(this._password, 10);
+
+    const c = new CryptoUtil();
+
+    this._email = c.encrypt(this._email);
+
+    this._phone = c.encrypt(this._phone);
   }
 
   public passwordIsValid(rawPassword: string): boolean {
     return bcrypt.compareSync(rawPassword, this._password);
+  }
+
+  @AfterLoad()
+  decryptFields() {
+    const c = new CryptoUtil();
+
+    this._email = c.decrypt(this._email);
+
+    this._phone = c.decrypt(this._phone);
   }
 }

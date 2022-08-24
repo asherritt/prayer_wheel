@@ -6,9 +6,11 @@ import { PrayersService } from './prayers.service';
 import { User } from '../users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Report } from './report.entity';
+import { ModerationModule } from 'src/moderation/moderation.module';
 
 @Module({
   imports: [
+    ModerationModule,
     TypeOrmModule.forFeature([Prayer]),
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Report]),

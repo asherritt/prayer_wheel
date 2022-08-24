@@ -31,9 +31,9 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @SerializeOptions({
-    excludePrefixes: ['_'],
-  })
+  // @SerializeOptions({
+  //   excludePrefixes: ['_'],
+  // })
   @Get()
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
