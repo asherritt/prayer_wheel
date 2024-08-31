@@ -52,7 +52,7 @@ export class User {
 
   @Column({ type: 'int', default: 0 }) accepted: number;
 
-  @Column({ type: 'datetime' }) lastAcceptance: Date;
+  @Column({ type: 'datetime', default: null }) lastAcceptance: Date;
 
   @Column({ default: false }) _isBlacklisted: boolean;
 
@@ -64,7 +64,7 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    // TODO put salt in Env variable
+
     this._password = await bcrypt.hash(this._password, 10);
 
     const c = new CryptoUtil();
@@ -72,6 +72,7 @@ export class User {
     this._email = c.encrypt(this._email);
 
     this._phone = c.encrypt(this._phone);
+
   }
 
   public passwordIsValid(rawPassword: string): boolean {
@@ -80,10 +81,12 @@ export class User {
 
   @AfterLoad()
   decryptFields() {
+
     const c = new CryptoUtil();
 
     this._email = c.decrypt(this._email);
 
     this._phone = c.decrypt(this._phone);
+
   }
 }
